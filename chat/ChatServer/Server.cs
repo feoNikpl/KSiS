@@ -257,11 +257,24 @@ namespace ChatServer
             adapter.Fill(ds);
             if (ds.Tables[0].Rows.Count != 0)
             {
-                foreach(DataRow row in ds.Tables[0].Rows)
+                if (message.DialogIndex == 0)
                 {
-                    if ((row.ItemArray[0].ToString() == message.id.ToString() && row.ItemArray[1].ToString() == message.DialogIndex.ToString()) || (row.ItemArray[1].ToString() == message.id.ToString() && row.ItemArray[0].ToString() == message.DialogIndex.ToString()))
+                    foreach (DataRow row in ds.Tables[0].Rows)
                     {
-                        HistoryList.Add(new PrivateMessage(ServerIP, Convert.ToDateTime(row.ItemArray[2]), Convert.ToInt32(row.ItemArray[1]), row.ItemArray[3].ToString(), Convert.ToInt32(row.ItemArray[0])));
+                        if (row.ItemArray[0].ToString() == "0")
+                        {
+                            HistoryList.Add(new PrivateMessage(ServerIP, Convert.ToDateTime(row.ItemArray[2]), Convert.ToInt32(row.ItemArray[1]), row.ItemArray[3].ToString(), Convert.ToInt32(row.ItemArray[0])));
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        if ((row.ItemArray[0].ToString() == message.id.ToString() && row.ItemArray[1].ToString() == message.DialogIndex.ToString()) || (row.ItemArray[1].ToString() == message.id.ToString() && row.ItemArray[0].ToString() == message.DialogIndex.ToString()))
+                        {
+                            HistoryList.Add(new PrivateMessage(ServerIP, Convert.ToDateTime(row.ItemArray[2]), Convert.ToInt32(row.ItemArray[1]), row.ItemArray[3].ToString(), Convert.ToInt32(row.ItemArray[0])));
+                        }
                     }
                 }
             }
