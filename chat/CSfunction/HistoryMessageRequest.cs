@@ -9,9 +9,11 @@ namespace CSfunction
     public class HistoryMessageRequest:Message
     {
         public int id;
-        public HistoryMessageRequest(IPAddress address, int id) : base(address)
+        public int DialogIndex;
+        public HistoryMessageRequest(IPAddress address, int id, int index) : base(address)
         {
             this.id = id;
+            this.DialogIndex = index;
         }
     }
 }

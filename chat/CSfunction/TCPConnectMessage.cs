@@ -9,8 +9,10 @@ namespace CSfunction
     public class TCPConnectMessage:Message
     {
         public string name;
-        public TCPConnectMessage(IPAddress address, string name) : base(address)
+        public int id;
+        public TCPConnectMessage(IPAddress address, string name, int id) : base(address)
         {
+            this.id = id;
             this.name = name;
         }
     }
