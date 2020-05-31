@@ -10,10 +10,12 @@ namespace CSfunction
     [Serializable]
     public class ServerRequest : Message
     {
+        public string ClientName;
         public int ClientPort;
-        public ServerRequest(IPAddress address, int port) : base(address)
+        public ServerRequest(IPAddress address, int port, string name) : base(address)
         {
             this.ClientPort = port;
+            this.ClientName = name;
         }
     }
 }

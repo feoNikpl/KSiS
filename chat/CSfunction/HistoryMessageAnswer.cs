@@ -7,8 +7,8 @@ namespace CSfunction
     [Serializable]
     public class HistoryMessageAnswer : Message
     {
-        public List<AllMessage> History;
-        public HistoryMessageAnswer(IPAddress address, List<AllMessage> History) : base(address)
+        public List<PrivateMessage> History;
+        public HistoryMessageAnswer(IPAddress address, List<PrivateMessage> History) : base(address)
         {
             this.History = History;
         }
