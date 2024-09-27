@@ -37,13 +37,16 @@
             this.label1 = new System.Windows.Forms.Label();
             this.MembersBox = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ClientID = new System.Windows.Forms.TextBox();
+            this.UdpConnect = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ChatHistory
             // 
-            this.ChatHistory.Location = new System.Drawing.Point(12, 68);
+            this.ChatHistory.Location = new System.Drawing.Point(12, 107);
             this.ChatHistory.Name = "ChatHistory";
-            this.ChatHistory.Size = new System.Drawing.Size(388, 384);
+            this.ChatHistory.Size = new System.Drawing.Size(388, 345);
             this.ChatHistory.TabIndex = 1;
             this.ChatHistory.Text = "";
             // 
@@ -86,12 +89,13 @@
             // 
             // SerwerConnect
             // 
-            this.SerwerConnect.Location = new System.Drawing.Point(134, 27);
+            this.SerwerConnect.Location = new System.Drawing.Point(132, 81);
             this.SerwerConnect.Name = "SerwerConnect";
             this.SerwerConnect.Size = new System.Drawing.Size(151, 20);
             this.SerwerConnect.TabIndex = 8;
             this.SerwerConnect.Text = "Соедениться с сервером";
             this.SerwerConnect.UseVisualStyleBackColor = true;
+            this.SerwerConnect.Visible = false;
             this.SerwerConnect.Click += new System.EventHandler(this.SerwerConnect_Click);
             // 
             // label1
@@ -106,9 +110,9 @@
             // MembersBox
             // 
             this.MembersBox.FormattingEnabled = true;
-            this.MembersBox.Location = new System.Drawing.Point(440, 68);
+            this.MembersBox.Location = new System.Drawing.Point(440, 107);
             this.MembersBox.Name = "MembersBox";
-            this.MembersBox.Size = new System.Drawing.Size(166, 381);
+            this.MembersBox.Size = new System.Drawing.Size(166, 342);
             this.MembersBox.TabIndex = 12;
             this.MembersBox.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
@@ -120,11 +124,42 @@
             this.label2.Size = new System.Drawing.Size(0, 13);
             this.label2.TabIndex = 13;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 64);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(41, 13);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "ваш ID";
+            this.label3.Visible = false;
+            // 
+            // ClientID
+            // 
+            this.ClientID.Location = new System.Drawing.Point(12, 82);
+            this.ClientID.Name = "ClientID";
+            this.ClientID.Size = new System.Drawing.Size(100, 20);
+            this.ClientID.TabIndex = 14;
+            this.ClientID.Visible = false;
+            // 
+            // UdpConnect
+            // 
+            this.UdpConnect.Location = new System.Drawing.Point(132, 27);
+            this.UdpConnect.Name = "UdpConnect";
+            this.UdpConnect.Size = new System.Drawing.Size(151, 20);
+            this.UdpConnect.TabIndex = 16;
+            this.UdpConnect.Text = "найти сервер";
+            this.UdpConnect.UseVisualStyleBackColor = true;
+            this.UdpConnect.Click += new System.EventHandler(this.button1_Click_1);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 640);
+            this.Controls.Add(this.UdpConnect);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.ClientID);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.MembersBox);
             this.Controls.Add(this.label1);
@@ -153,6 +188,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox MembersBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox ClientID;
+        private System.Windows.Forms.Button UdpConnect;
     }
 }
 

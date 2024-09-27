@@ -22,7 +22,6 @@ namespace ChatClient
         private Thread listenTcpThread;
         public int ClientID = -1;
         public List<СhatMembers> Members;
-        public List<AllMessage> AllMessages;
         public List<PrivateMessage> PrivateMessages;
         public event ReceiveMessage ReceiveMessageEvent;
 
@@ -33,7 +32,6 @@ namespace ChatClient
             serializer = new Serializer();
             ClientIP = GetIP();
             IPEndPoint localip = new IPEndPoint(ClientIP, localPort);
-            AllMessages = new List<AllMessage>();
             Members = new List<СhatMembers>();
             PrivateMessages = new List<PrivateMessage>();
             UdpSocket.Bind(localip);
@@ -94,21 +92,21 @@ namespace ChatClient
         }
 
         //соединение с сервером
-        public void UDPConnectServer()
+        public void UDPConnectServer(string clientName)
         {
             IPEndPoint Broadcast = new IPEndPoint(IPAddress.Broadcast, ServerPort);
             UdpSocket.EnableBroadcast = true;
-            UdpSocket.SendTo(serializer.Serialize(MakeServerRequest()), Broadcast);
+            UdpSocket.SendTo(serializer.Serialize(MakeServerRequest(clientName)), Broadcast);
             listenUdpThread.Start();
         }
 
-        public bool TCPConnectServer(string clientName)
+        public bool TCPConnectServer(string clientName, int id)
         {
             try
             {
                 TcpSocket.Connect(ServerEndPoint);
                 listenTcpThread.Start();
-                SendMessage(MakeRegistrationMessage(clientName));
+                SendMessage(MakeRegistrationMessage(clientName, id));
                 GeneralFunction.CloseSocket(ref UdpSocket);
                 GeneralFunction.CloseThread(ref listenUdpThread);
                 return true;
@@ -123,21 +121,17 @@ namespace ChatClient
         //сортировка сообщений
         public void MessageManager(Message message)
         {
-            if (message is ServerRequest)
-                SerwerAnswerRequest((ServerRequest)message);
-            if (message is AllMessage)
-                if (message is PrivateMessage)
-                    PrivateMessageManager((PrivateMessage)message);
-                else
-                    AllMessageManager((AllMessage)message);
+            if (message is ServerAnswerRequest)
+                SerwerAnswerRequest((ServerAnswerRequest)message);
+            if (message is PrivateMessage)
+                PrivateMessageManager((PrivateMessage)message);
             if (message is HistoryMessageAnswer)
                 HistoryMessageManager((HistoryMessageAnswer)message);
             if (message is ClientIDMessage)
                 ClientIDMessageManager((ClientIDMessage)message);
             if (message is MembersListMessage)
                 MembersListMessageManager((MembersListMessage)message);
-            if (message is AllMessage || message is HistoryMessageAnswer || message is PrivateMessage || message is MembersListMessage)
-                ReceiveMessageEvent(message);
+            ReceiveMessageEvent(message);
         }
         public void MembersListMessageManager(MembersListMessage message) 
         {
@@ -147,23 +141,22 @@ namespace ChatClient
         {
             ClientID = message.id;
         }
-        public void AllMessageManager(AllMessage message)
-        {
-            AllMessages.Add(message);
-        }
 
         public void PrivateMessageManager(PrivateMessage message)
         {
-            if (ClientID == message.reciverID)
+            if (ClientID == message.reciverID || (message.reciverID == 0 && ClientID != message.SenderID))
                 PrivateMessages.Add(message);
         }
 
         public void HistoryMessageManager(HistoryMessageAnswer message)
         {
-            AllMessages = message.History;
+            foreach(PrivateMessage mes in message.History)
+            {
+                PrivateMessages.Add(mes);
+            }
         }
 
-        public void SerwerAnswerRequest(ServerRequest message)
+        public void SerwerAnswerRequest(ServerAnswerRequest message)
         {
             ServerEndPoint = new IPEndPoint(message.SenderAddress, message.ClientPort);
         }
@@ -174,28 +167,34 @@ namespace ChatClient
             TcpSocket.Send(serializer.Serialize(message));
         }
         //Создание сообщений
-        public ServerRequest MakeServerRequest()
+        public ServerRequest MakeServerRequest(string clientName)
         {
             IPEndPoint localIp = (IPEndPoint)UdpSocket.LocalEndPoint;
-            return new ServerRequest(localIp.Address, localIp.Port);
+            return new ServerRequest(localIp.Address, localIp.Port, clientName);
         }
-        public TCPConnectMessage MakeRegistrationMessage(string clientName)
+        public TCPConnectMessage MakeRegistrationMessage(string clientName, int id)
         {
-            return new TCPConnectMessage(ClientIP, clientName);
+            return new TCPConnectMessage(ClientIP, clientName, id);
         }
         public void SendMessage(string data, int id)
         {
-            if (id == 0)
-                SendMessage(new AllMessage(ClientIP, DateTime.Now, ClientID, data));
-            if (id > 0)
-            {
                 PrivateMessage message = new PrivateMessage(ClientIP, DateTime.Now, ClientID, data, id);
                 SendMessage(message);
                 PrivateMessages.Add(message);
-            }
         }
 
-
+        public void ClearHistory(int selectindex)
+        {
+            List<PrivateMessage> tmp = new List<PrivateMessage>();
+            foreach (PrivateMessage message in PrivateMessages)
+                if (message.SenderID == selectindex || message.reciverID == selectindex)
+                    tmp.Add(message);
+            foreach (PrivateMessage message in tmp)
+            {
+                PrivateMessages.Remove(message);
+            }
+            tmp.Clear();
+        }
         public IPAddress GetIP()
         {
             string HostName = Dns.GetHostName();
